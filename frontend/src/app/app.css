@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap');
+
+:host {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  color: var(--texto);
+  background: var(--papel);
+  min-height: 100vh;
+  padding: 32px;
+}
+
+h1 {
+  font-family: 'Source Serif 4', serif;
+  font-size: 26px;
+  margin: 0 0 6px 0;
+  color: var(--ink);
+}
+
+.subtitulo {
+  color: var(--texto-sua);
+  font-size: 14px;
+  margin: 0 0 24px 0;
+}
+
+.grid-inst {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.card-inst {
+  background: var(--tarjeta);
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  padding: 17px;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.card-inst:hover {
+  box-shadow: 0 8px 20px rgba(28, 36, 28, 0.09);
+  border-color: var(--edu);
+}
+
+.card-inst h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: var(--ink);
+}
+
+.badge-zona {
+  display: inline-flex;
+  background: var(--edu-soft);
+  color: var(--edu-ink);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 20px;
+}
+
+.pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 13px;
+  padding-top: 11px;
+  border-top: 1px solid var(--linea);
+  font-size: 12px;
+  color: var(--texto-sua);
+}

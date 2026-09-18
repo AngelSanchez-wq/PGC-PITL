@@ -1,0 +1,148 @@
+<div class="login-screen">
+  <div class="escena">
+    <div class="panel-territorio">
+      <div class="marca">
+        <div class="badge-verificado">
+          <span class="ic">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" />
+            </svg>
+          </span>
+          Plataforma oficial verificada
+        </div>
+        <div class="sello">LI</div>
+        <p class="eyebrow">Alcaldía de Lenguazaque · Cundinamarca</p>
+        <h1>Lenguazaque Integra</h1>
+        <p>
+          Plataforma de interoperabilidad entre educación y gobernanza municipal. Un solo acceso
+          para consultar y registrar información del territorio.
+        </p>
+      </div>
+      <div class="franjas">
+        <div class="item">
+          <span class="num">01</span><span class="lbl">Instituciones educativas</span>
+        </div>
+        <div class="item">
+          <span class="num">02</span><span class="lbl">Solicitudes de gobernanza</span>
+        </div>
+        <div class="item">
+          <span class="num">03</span><span class="lbl">Zonas del territorio</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-acceso">
+      <div class="encabezado-form">
+        <h2>Ingresar a la plataforma</h2>
+        <p>Usa tus credenciales institucionales para continuar.</p>
+      </div>
+
+      <div class="selector-sector" role="tablist" aria-label="Sector de acceso">
+        <button
+          type="button"
+          class="btn-sector-edu"
+          [class.activo]="sector() === 'educacion'"
+          (click)="seleccionarSector('educacion')"
+        >
+          Educación
+        </button>
+        <button
+          type="button"
+          class="btn-sector-gob"
+          [class.activo]="sector() === 'gobernanza'"
+          (click)="seleccionarSector('gobernanza')"
+        >
+          Gobernanza
+        </button>
+      </div>
+
+      <div class="aviso-sector">{{ avisoSector() }}</div>
+
+      <form (ngSubmit)="enviar()" novalidate>
+        <div class="campo" [class.error]="errorUsuario()">
+          <label for="usuario">Usuario o correo institucional</label>
+          <div class="campo-input-wrap">
+            <input
+              type="text"
+              id="usuario"
+              name="usuario"
+              placeholder="usuario@ejemplo.com"
+              autocomplete="username"
+              inputmode="email"
+              [ngModel]="usuario()"
+              (ngModelChange)="usuario.set($event)"
+            />
+          </div>
+          <span class="msg-error">Ingresa tu usuario o correo institucional.</span>
+        </div>
+
+        <div class="campo" [class.error]="errorClave()">
+          <label for="clave">Contraseña</label>
+          <div class="campo-input-wrap con-ojo">
+            <input
+              [type]="mostrarClave() ? 'text' : 'password'"
+              id="clave"
+              name="clave"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              [ngModel]="clave()"
+              (ngModelChange)="clave.set($event)"
+              (keyup)="verificarCapsLock($event)"
+            />
+            <button
+              type="button"
+              class="btn-ojo"
+              (click)="alternarMostrarClave()"
+              [attr.aria-label]="mostrarClave() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <span class="ic">
+                <svg viewBox="0 0 24 24">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </span>
+            </button>
+          </div>
+          <span class="msg-error">La contraseña es obligatoria.</span>
+          <div class="aviso-capslock" [class.mostrar]="capsActivo()">
+            <span class="ic">
+              <svg viewBox="0 0 24 24"><path d="M12 2l9 9h-6v9H9v-9H3l9-9z" /></svg>
+            </span>
+            Bloq Mayús está activado.
+          </div>
+        </div>
+
+        <div class="fila-aux">
+          <label class="recordar"
+            ><input type="checkbox" name="recordar" /> Recordar este equipo</label
+          >
+          <a href="#" class="olvido" (click)="$event.preventDefault()">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primario" style="width: 100%" [disabled]="cargando()">
+          <span class="spinner" [style.display]="cargando() ? 'inline-block' : 'none'"></span>
+          <span>{{ cargando() ? 'Verificando…' : 'Entrar al panel' }}</span>
+        </button>
+
+        <div class="nota-seguridad">
+          <span class="ic">
+            <svg viewBox="0 0 24 24">
+              <rect x="4" y="10" width="16" height="10" rx="2" />
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            </svg>
+          </span>
+          Conexión cifrada · datos alojados según lineamientos de gobierno digital
+        </div>
+
+        <div class="crear-cuenta-caja">
+          <span>¿No tienes una cuenta?</span>
+          <button type="button" class="btn-texto">Crear cuenta</button>
+        </div>
+      </form>
+
+      <div class="pie-form">
+        <span>¿Problemas de acceso? Contacta a soporte TI.</span>
+      </div>
+    </div>
+  </div>
+</div>

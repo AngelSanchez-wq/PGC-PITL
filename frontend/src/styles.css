@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --ink: #16241c;
+  --papel: #f6f1e7;
+  --tarjeta: #ffffff;
+  --linea: rgba(22, 36, 28, 0.13);
+  --texto: #1c231c;
+  --texto-sua: #5b6357;
+  --edu: #1f6e82;
+  --edu-ink: #0f3f4b;
+  --edu-soft: #ddeef1;
+
+  --ink-2: #1f3327;
+  --ink-line: rgba(234, 230, 216, 0.1);
+  --papel-2: #efe7d6;
+  --texto-tenue: #8a9084;
+  --trigo: #c8942e;
+  --trigo-2: #e0ae4a;
+  --gob: #a9672c;
+  --gob-ink: #5e3b18;
+  --gob-soft: #f3e3c7;
+  --ok: #3e7d52;
+  --ok-soft: #e3efe5;
+  --warn: #b3492f;
+  --warn-soft: #f6e4de;
+}
