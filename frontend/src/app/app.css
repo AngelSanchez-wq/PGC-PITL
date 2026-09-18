@@ -70,3 +70,258 @@ h1 {
   font-size: 12px;
   color: var(--texto-sua);
 }
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.topbar {
+  height: 62px;
+  background: #fff;
+  border-bottom: 1px solid var(--linea);
+  display: flex;
+  align-items: center;
+  padding: 0 22px;
+  gap: 18px;
+  flex-shrink: 0;
+}
+.marca-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.marca-mini .sello-mini {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #efead9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Source Serif 4', serif;
+  font-size: 12.5px;
+}
+.marca-mini span {
+  font-weight: 600;
+  font-size: 14.5px;
+}
+
+.buscador-global {
+  flex: 1;
+  max-width: 420px;
+}
+.buscador-global input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--linea);
+  border-radius: 7px;
+  font-size: 13.5px;
+  background: var(--papel);
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.buscador-global input:focus {
+  border-color: var(--ink-2);
+  background: #fff;
+}
+
+.topbar-derecha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+.chip-sector {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 20px;
+}
+.chip-sector.educacion {
+  background: var(--edu-soft);
+  color: var(--edu-ink);
+}
+.chip-sector.gobernanza {
+  background: var(--gob-soft);
+  color: var(--gob-ink);
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--papel-2);
+  border: 1px solid var(--linea);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--texto-sua);
+}
+.btn-salir {
+  background: none;
+  border: none;
+  color: var(--texto-sua);
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+.btn-salir:hover {
+  background: var(--papel);
+  color: var(--texto);
+}
+
+.app-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.sidebar {
+  width: 224px;
+  background: var(--ink);
+  color: #c9cbbe;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 12px;
+  flex-shrink: 0;
+}
+.nav-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.nav-item {
+  padding: 10px 11px;
+  border-radius: 7px;
+  font-size: 13.5px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  margin-left: -3px;
+  transition:
+    background 0.14s ease,
+    color 0.14s ease;
+}
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+.nav-item.activo {
+  background: rgba(255, 255, 255, 0.09);
+  color: #fff;
+}
+.nav-item[data-section='educacion'].activo {
+  border-left-color: var(--edu);
+}
+.nav-item[data-section='gobernanza'].activo {
+  border-left-color: var(--gob);
+}
+.nav-item[data-section='inicio'].activo,
+.nav-item[data-section='territorio'].activo {
+  border-left-color: #eae6d8;
+}
+
+.sidebar-pie {
+  font-size: 11.5px;
+  color: #8a9084;
+  padding: 11px 11px 4px;
+  border-top: 1px solid var(--ink-line);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.punto-activo {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #5fae78;
+  flex-shrink: 0;
+}
+
+.contenido {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px 38px 60px;
+}
+.contenido-header {
+  margin-bottom: 22px;
+}
+.contenido-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+.contenido-header p {
+  margin: 5px 0 0;
+  font-size: 13.5px;
+  color: var(--texto-sua);
+}
+
+.stats-fila {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 26px;
+}
+.stat-card {
+  background: var(--tarjeta);
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+  padding: 16px 18px;
+  border-left: 3px solid var(--edu);
+}
+.stat-card.gob {
+  border-left-color: var(--gob);
+}
+.stat-card .num {
+  font-family: 'Source Serif 4', serif;
+  font-size: 26px;
+  font-weight: 600;
+}
+.stat-card .lbl {
+  font-size: 12px;
+  color: var(--texto-sua);
+  margin-top: 3px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.toolbar input[type='text'] {
+  flex: 1;
+  min-width: 180px;
+  padding: 9px 12px;
+  border: 1px solid var(--linea);
+  border-radius: 7px;
+  font-size: 13.5px;
+  background: #fff;
+  outline: none;
+}
+.toolbar input[type='text']:focus {
+  border-color: var(--ink-2);
+}
+.toolbar .conteo {
+  font-size: 12px;
+  color: var(--texto-sua);
+  white-space: nowrap;
+}
+
+.vacio {
+  background: var(--tarjeta);
+  border: 1px dashed var(--linea);
+  border-radius: 10px;
+  padding: 32px;
+  text-align: center;
+  color: var(--texto-sua);
+  font-size: 13.5px;
+}

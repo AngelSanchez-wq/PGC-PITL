@@ -1,16 +1,112 @@
 <app-login *ngIf="!sesionIniciada()" (loginExitoso)="onLoginExitoso($event)"></app-login>
 
-<ng-container *ngIf="sesionIniciada()">
-  <h1>Instituciones educativas</h1>
-  <p class="subtitulo">Instituciones registradas en el municipio de Lenguazaque.</p>
+<div class="app" *ngIf="sesionIniciada()">
+  <div class="topbar">
+    <div class="marca-mini">
+      <div class="sello-mini">LI</div>
+      <span>Lenguazaque Integra</span>
+    </div>
 
-  <div class="grid-inst">
-    <div class="card-inst" *ngFor="let inst of instituciones()">
-      <h4>{{ inst.nombre }}</h4>
-      <span class="badge-zona">{{ inst.zona_territorial }}</span>
-      <div class="pie">
-        <span>{{ inst.numero_estudiantes }} estudiantes</span>
-      </div>
+    <div class="buscador-global">
+      <input type="text" placeholder="Buscar institución, solicitud o zona…" autocomplete="off" />
+    </div>
+
+    <div class="topbar-derecha">
+      <span class="chip-sector" [ngClass]="sectorActivo()">
+        {{ sectorActivo() === 'educacion' ? 'Educación' : 'Gobernanza' }}
+      </span>
+      <div class="avatar">JD</div>
+      <button class="btn-salir" (click)="cerrarSesion()">Salir</button>
     </div>
   </div>
-</ng-container>
+
+  <div class="app-body">
+    <div class="sidebar">
+      <div class="nav-lista">
+        <div
+          class="nav-item"
+          *ngFor="let item of navItems"
+          [class.activo]="seccionActiva() === item.id"
+          [attr.data-section]="item.id"
+          (click)="cambiarSeccion(item.id)"
+        >
+          {{ item.etiqueta }}
+        </div>
+      </div>
+      <div class="sidebar-pie"><span class="punto-activo"></span> Interoperabilidad activa</div>
+    </div>
+
+    <div class="contenido">
+      <ng-container [ngSwitch]="seccionActiva()">
+        <div *ngSwitchCase="'inicio'">
+          <div class="contenido-header">
+            <h2>Inicio</h2>
+            <p>Resumen general de la plataforma para el municipio de Lenguazaque.</p>
+          </div>
+          <div class="stats-fila">
+            <div class="stat-card">
+              <div class="num">{{ instituciones().length }}</div>
+              <div class="lbl">Instituciones educativas</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">{{ totalEstudiantes() }}</div>
+              <div class="lbl">Estudiantes matriculados</div>
+            </div>
+            <div class="stat-card gob">
+              <div class="num">—</div>
+              <div class="lbl">Solicitudes de gobernanza</div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngSwitchCase="'educacion'">
+          <div class="contenido-header">
+            <h2>Educación</h2>
+            <p>Instituciones registradas en el municipio de Lenguazaque.</p>
+          </div>
+          <div class="toolbar">
+            <input
+              type="text"
+              placeholder="Buscar institución por nombre…"
+              [ngModel]="busquedaEdu()"
+              (ngModelChange)="busquedaEdu.set($event)"
+            />
+            <span class="conteo"
+              >{{ institucionesFiltradas().length }} de
+              {{ instituciones().length }} instituciones</span
+            >
+          </div>
+          <div class="grid-inst">
+            <div class="card-inst" *ngFor="let inst of institucionesFiltradas()">
+              <h4>{{ inst.nombre }}</h4>
+              <span class="badge-zona">{{ inst.zona_territorial }}</span>
+              <div class="pie">
+                <span>{{ inst.numero_estudiantes }} estudiantes</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngSwitchCase="'gobernanza'">
+          <div class="contenido-header">
+            <h2>Gobernanza</h2>
+            <p>Gestión y seguimiento de solicitudes territoriales del municipio.</p>
+          </div>
+          <div class="vacio">
+            <p>Esta sección se conectará al backend de gobernanza en la siguiente fase.</p>
+          </div>
+        </div>
+
+        <div *ngSwitchCase="'territorio'">
+          <div class="contenido-header">
+            <h2>Territorio</h2>
+            <p>Consulta integrada por zona: educación y gobernanza en un mismo lugar.</p>
+          </div>
+          <div class="vacio">
+            <p>Esta sección se construirá cuando tengamos las zonas y solicitudes conectadas.</p>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
