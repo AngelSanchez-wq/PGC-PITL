@@ -8,14 +8,19 @@
     </div>
 
     <div class="buscador-global">
-      <input type="text" placeholder="Buscar institución, solicitud o zona…" autocomplete="off" />
+      <input
+        type="text"
+        placeholder="Buscar institución, vereda o zona de Lenguazaque…"
+        [ngModel]="busquedaEdu()"
+        (ngModelChange)="busquedaEdu.set($event)"
+      />
     </div>
 
     <div class="topbar-derecha">
       <span class="chip-sector" [ngClass]="sectorActivo()">
         {{ sectorActivo() === 'educacion' ? 'Educación' : 'Gobernanza' }}
       </span>
-      <div class="avatar">JD</div>
+      <div class="avatar">AS</div>
       <button class="btn-salir" (click)="cerrarSesion()">Salir</button>
     </div>
   </div>
@@ -33,77 +38,356 @@
           {{ item.etiqueta }}
         </div>
       </div>
-      <div class="sidebar-pie"><span class="punto-activo"></span> Interoperabilidad activa</div>
+      <div class="sidebar-pie">
+        <span class="punto-activo"></span> Interoperabilidad activa
+      </div>
     </div>
 
     <div class="contenido">
+      <!-- Notificación flotante de éxito -->
+      <div class="alerta-exito" *ngIf="mensajeExito()">
+        <span class="icono-check">✓</span>
+        {{ mensajeExito() }}
+      </div>
+
       <ng-container [ngSwitch]="seccionActiva()">
+        <!-- SECCIÓN: INICIO -->
         <div *ngSwitchCase="'inicio'">
           <div class="contenido-header">
-            <h2>Inicio</h2>
-            <p>Resumen general de la plataforma para el municipio de Lenguazaque.</p>
+            <div>
+              <h2>Panel de Control Territorial</h2>
+              <p>Resumen general de interoperabilidad para el municipio de Lenguazaque, Cundinamarca.</p>
+            </div>
+            <button class="btn-secundario" (click)="cargarInstituciones()">
+              🔄 Refrescar datos
+            </button>
           </div>
+
           <div class="stats-fila">
             <div class="stat-card">
               <div class="num">{{ instituciones().length }}</div>
-              <div class="lbl">Instituciones educativas</div>
+              <div class="lbl">Instituciones y sedes educativas</div>
+              <div class="sub-stat">
+                <span>🏙️ {{ totalUrbanas() }} Urbanas</span>
+                <span>🏡 {{ totalRurales() }} Rurales</span>
+              </div>
             </div>
+
             <div class="stat-card">
-              <div class="num">{{ totalEstudiantes() }}</div>
+              <div class="num">{{ totalEstudiantes().toLocaleString() }}</div>
               <div class="lbl">Estudiantes matriculados</div>
+              <div class="sub-stat">
+                <span>Promedio: {{ promedioEstudiantes() }} por sede</span>
+              </div>
             </div>
+
             <div class="stat-card gob">
-              <div class="num">—</div>
-              <div class="lbl">Solicitudes de gobernanza</div>
+              <div class="num">14</div>
+              <div class="lbl">Veredas cubiertas</div>
+              <div class="sub-stat">
+                <span>Cobertura municipal activa</span>
+              </div>
             </div>
+          </div>
+
+          <div class="banner-incremento">
+            <div class="banner-icono">🚀</div>
+            <div class="banner-texto">
+              <strong>Incremento 2: Flujo End-to-End e Interoperabilidad</strong>
+              <p>Los datos mostrados se cargan dinámicamente desde el backend en Laravel con persistencia en MySQL/SQLite. Puedes consultar el módulo de Educación para explorar los registros o insertar una nueva sede educativa.</p>
+            </div>
+            <button class="btn-primario" (click)="cambiarSeccion('educacion')">Ir a Educación →</button>
           </div>
         </div>
 
+        <!-- SECCIÓN: EDUCACIÓN -->
         <div *ngSwitchCase="'educacion'">
           <div class="contenido-header">
-            <h2>Educación</h2>
-            <p>Instituciones registradas en el municipio de Lenguazaque.</p>
+            <div>
+              <h2>Sector Educación</h2>
+              <p>Instituciones y sedes educativas registradas en Lenguazaque.</p>
+            </div>
+            <div class="acciones-header">
+              <button class="btn-secundario" (click)="cargarInstituciones()" [disabled]="cargandoInstituciones()">
+                {{ cargandoInstituciones() ? 'Cargando...' : '🔄 Recargar' }}
+              </button>
+              <button class="btn-primario" (click)="abrirFormulario()">
+                + Registrar Institución
+              </button>
+            </div>
           </div>
+
+          <!-- Modal/Formulario de Registro -->
+          <div class="modal-overlay" *ngIf="mostrarFormulario()">
+            <div class="modal-card">
+              <div class="modal-header">
+                <h3>Registrar Nueva Institución Educativa</h3>
+                <button class="btn-cerrar" (click)="cancelarFormulario()">✕</button>
+              </div>
+
+              <div class="modal-body">
+                <div class="alerta-error" *ngIf="errorFormulario()">
+                  {{ errorFormulario() }}
+                </div>
+
+                <div class="campo-form">
+                  <label>Nombre de la Institución o Sede</label>
+                  <input
+                    type="text"
+                    placeholder="Ej. Sede Educativa Rural Siatama"
+                    [ngModel]="nuevoNombre()"
+                    (ngModelChange)="nuevoNombre.set($event)"
+                  />
+                </div>
+
+                <div class="campo-form">
+                  <label>Zona Territorial</label>
+                  <select
+                    [ngModel]="nuevaZona()"
+                    (ngModelChange)="nuevaZona.set($event)"
+                  >
+                    <option value="Rural">Rural (Vereda)</option>
+                    <option value="Urbana">Urbana (Casco Urbano)</option>
+                  </select>
+                </div>
+
+                <div class="campo-form">
+                  <label>Número de Estudiantes Matriculados</label>
+                  <input
+                    type="number"
+                    min="0"
+                    placeholder="Ej. 65"
+                    [ngModel]="nuevoEstudiantes()"
+                    (ngModelChange)="nuevoEstudiantes.set($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="modal-footer">
+                <button class="btn-secundario" (click)="cancelarFormulario()">Cancelar</button>
+                <button
+                  class="btn-primario"
+                  (click)="guardarNuevaInstitucion()"
+                  [disabled]="guardando()"
+                >
+                  {{ guardando() ? 'Guardando...' : 'Guardar en Base de Datos' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mensaje de error si la API de instituciones falla -->
+          <div class="alerta-servidor" *ngIf="errorInstituciones()">
+            <span class="icono-alerta">⚠️</span>
+            <div>
+              <strong>Conexión con MySQL no disponible:</strong>
+              <p>{{ errorInstituciones() }}</p>
+            </div>
+            <button class="btn-secundario-sm" (click)="cargarInstituciones()">Reintentar</button>
+          </div>
+
+          <!-- Filtros y Búsqueda -->
           <div class="toolbar">
-            <input
-              type="text"
-              placeholder="Buscar institución por nombre…"
-              [ngModel]="busquedaEdu()"
-              (ngModelChange)="busquedaEdu.set($event)"
-            />
-            <span class="conteo"
-              >{{ institucionesFiltradas().length }} de
-              {{ instituciones().length }} instituciones</span
-            >
+            <div class="toolbar-izq">
+              <input
+                type="text"
+                placeholder="Buscar por nombre o vereda…"
+                [ngModel]="busquedaEdu()"
+                (ngModelChange)="busquedaEdu.set($event)"
+              />
+
+              <div class="grupo-filtros">
+                <button
+                  class="btn-filtro"
+                  [class.activo]="filtroZona() === 'Todas'"
+                  (click)="filtroZona.set('Todas')"
+                >
+                  Todas ({{ instituciones().length }})
+                </button>
+                <button
+                  class="btn-filtro"
+                  [class.activo]="filtroZona() === 'Urbana'"
+                  (click)="filtroZona.set('Urbana')"
+                >
+                  🏙️ Urbana ({{ totalUrbanas() }})
+                </button>
+                <button
+                  class="btn-filtro"
+                  [class.activo]="filtroZona() === 'Rural'"
+                  (click)="filtroZona.set('Rural')"
+                >
+                  🏡 Rural ({{ totalRurales() }})
+                </button>
+              </div>
+            </div>
+
+            <span class="conteo">
+              Mostrando {{ institucionesFiltradas().length }} de {{ instituciones().length }} instituciones
+            </span>
           </div>
-          <div class="grid-inst">
+
+          <!-- Lista de Tarjetas -->
+          <div class="grid-inst" *ngIf="institucionesFiltradas().length > 0">
             <div class="card-inst" *ngFor="let inst of institucionesFiltradas()">
+              <div class="card-icono">{{ inst.zona_territorial === 'Urbana' ? '🏛️' : '🏫' }}</div>
               <h4>{{ inst.nombre }}</h4>
-              <span class="badge-zona">{{ inst.zona_territorial }}</span>
+              <span class="badge-zona" [ngClass]="inst.zona_territorial.toLowerCase()">
+                {{ inst.zona_territorial }}
+              </span>
               <div class="pie">
-                <span>{{ inst.numero_estudiantes }} estudiantes</span>
+                <span class="estudiantes-badge">
+                  👥 <strong>{{ inst.numero_estudiantes }}</strong> estudiantes
+                </span>
+                <span class="id-tag">ID: #{{ inst.id }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Estado Vacío -->
+          <div class="vacio" *ngIf="institucionesFiltradas().length === 0 && !cargandoInstituciones() && !errorInstituciones()">
+            <p>No se encontraron instituciones registradas o con el criterio de búsqueda.</p>
+            <button class="btn-secundario" (click)="busquedaEdu.set(''); filtroZona.set('Todas')">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+
+        <!-- SECCIÓN: GOBERNANZA (Capacidad 2 - HU-09) -->
+        <div *ngSwitchCase="'gobernanza'">
+          <div class="contenido-header">
+            <div>
+              <h2>Gobernanza Territorial (HU-09)</h2>
+              <p>Registro y seguimiento de solicitudes territoriales articuladas con zonas y veredas de Lenguazaque.</p>
+            </div>
+            <button class="btn-secundario" (click)="cargarSolicitudes()" [disabled]="cargandoSolicitudes()">
+              {{ cargandoSolicitudes() ? 'Cargando...' : '🔄 Actualizar' }}
+            </button>
+          </div>
+
+          <!-- Mensaje de éxito de solicitud -->
+          <div class="alerta-exito" *ngIf="mensajeExitoSolicitud()">
+            <span class="icono-check">✓</span>
+            {{ mensajeExitoSolicitud() }}
+          </div>
+
+          <!-- Mensaje de error general de MySQL/API -->
+          <div class="alerta-servidor" *ngIf="errorSolicitudes()">
+            <span class="icono-alerta">⚠️</span>
+            <div>
+              <strong>Error en la API de Gobernanza (MySQL):</strong>
+              <p>{{ errorSolicitudes() }}</p>
+            </div>
+            <button class="btn-secundario-sm" (click)="cargarSolicitudes()">Reintentar</button>
+          </div>
+
+          <div class="layout-gobernanza">
+            <!-- Formulario de Radicación de Solicitud (HU-09) -->
+            <div class="tarjeta-formulario-gob">
+              <div class="form-header-gob">
+                <div class="sello-form">📋</div>
+                <div>
+                  <h3>Radicar Solicitud Territorial</h3>
+                  <small>Capacidad 2 — HU-09 (Angular → Laravel → MySQL)</small>
+                </div>
+              </div>
+
+              <div class="alerta-error" *ngIf="errorFormSolicitud()">
+                {{ errorFormSolicitud() }}
+              </div>
+
+              <div class="campo-form">
+                <label>Zona Territorial *</label>
+                <select
+                  [ngModel]="solicitudZonaId()"
+                  (ngModelChange)="solicitudZonaId.set($event)"
+                >
+                  <option *ngFor="let z of zonasDisponibles()" [value]="z.id">
+                    {{ z.nombre }} (ID: {{ z.id }})
+                  </option>
+                </select>
+              </div>
+
+              <div class="campo-form">
+                <label>Asunto de la Solicitud *</label>
+                <input
+                  type="text"
+                  placeholder="Ej. [Ejemplo] Mantenimiento vía veredal"
+                  [ngModel]="solicitudAsunto()"
+                  (ngModelChange)="solicitudAsunto.set($event)"
+                />
+              </div>
+
+              <div class="campo-form">
+                <label>Descripción Detallada *</label>
+                <textarea
+                  rows="4"
+                  placeholder="Ej. [Ejemplo] Detalle de la necesidad comunal o veredal..."
+                  [ngModel]="solicitudDescripcion()"
+                  (ngModelChange)="solicitudDescripcion.set($event)"
+                ></textarea>
+              </div>
+
+              <button
+                class="btn-primario btn-bloque"
+                (click)="guardarSolicitud()"
+                [disabled]="guardandoSolicitud()"
+              >
+                {{ guardandoSolicitud() ? 'Radicando en base de datos...' : 'Radicar Solicitud en MySQL' }}
+              </button>
+            </div>
+
+            <!-- Listado de Solicitudes Cargadas desde MySQL -->
+            <div class="panel-lista-solicitudes">
+              <div class="lista-header-gob">
+                <h4>Solicitudes Radicadas</h4>
+                <span class="badge-total">{{ solicitudes().length }} solicitudes</span>
+              </div>
+
+              <div class="spinner-cargando" *ngIf="cargandoSolicitudes()">
+                Cargando solicitudes desde MySQL...
+              </div>
+
+              <div class="grid-solicitudes" *ngIf="solicitudes().length > 0">
+                <div class="card-solicitud" *ngFor="let s of solicitudes()">
+                  <div class="card-solicitud-header">
+                    <span class="radicado-tag">Radicado #{{ s.id }}</span>
+                    <span class="badge-estado" [ngClass]="(s.estado || 'pendiente').toLowerCase()">
+                      {{ s.estado || 'Pendiente' }}
+                    </span>
+                  </div>
+
+                  <h5>{{ s.asunto }}</h5>
+                  <p class="desc-solicitud">{{ s.descripcion }}</p>
+
+                  <div class="card-solicitud-footer">
+                    <span class="badge-zona-sm">
+                      📍 Zona {{ s.zona_territorial?.nombre || 'Territorial' }}
+                    </span>
+                    <span class="fecha-solicitud" *ngIf="s.created_at">
+                      {{ s.created_at | date:'short' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="vacio" *ngIf="solicitudes().length === 0 && !cargandoSolicitudes() && !errorSolicitudes()">
+                <div class="icono-vacio">📭</div>
+                <p>No hay solicitudes de gobernanza radicadas aún en la base de datos.</p>
+                <small>Diligencia el formulario para insertar la primera solicitud mediante HU-09.</small>
               </div>
             </div>
           </div>
         </div>
 
-        <div *ngSwitchCase="'gobernanza'">
-          <div class="contenido-header">
-            <h2>Gobernanza</h2>
-            <p>Gestión y seguimiento de solicitudes territoriales del municipio.</p>
-          </div>
-          <div class="vacio">
-            <p>Esta sección se conectará al backend de gobernanza en la siguiente fase.</p>
-          </div>
-        </div>
-
+        <!-- SECCIÓN: TERRITORIO -->
         <div *ngSwitchCase="'territorio'">
           <div class="contenido-header">
-            <h2>Territorio</h2>
-            <p>Consulta integrada por zona: educación y gobernanza en un mismo lugar.</p>
+            <h2>Territorio Integrado</h2>
+            <p>Consulta integrada por zona: educación y gobernanza en un mismo mapa y repositorio.</p>
           </div>
           <div class="vacio">
-            <p>Esta sección se construirá cuando tengamos las zonas y solicitudes conectadas.</p>
+            <div class="icono-vacio">🗺️</div>
+            <p>Mapeo geográfico de las 14 veredas de Lenguazaque y su articulación institucional.</p>
           </div>
         </div>
       </ng-container>
